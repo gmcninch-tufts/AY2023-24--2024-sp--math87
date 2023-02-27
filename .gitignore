@@ -1,0 +1,16 @@
+exams/*.pdf
+lecture-summaries/*.pdf
+lecture-summaries/*.html
+lecture-beamer/*.pdf
+lecture-beamer/*.html
+resources/*.pdf
+resources/*.html
+pacing/*.pdf
+pacing/*.html
+pacing/*.md
+problem-sets/*.html
+problem-sets/*.pdf
+*.dvi
+*.log
+*.out
+*.aux
