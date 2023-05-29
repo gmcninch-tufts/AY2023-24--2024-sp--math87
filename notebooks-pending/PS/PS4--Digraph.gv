@@ -1,0 +1,24 @@
+digraph {
+	rankdir=LR
+	t
+	{
+		rank=same
+		a
+		c
+	}
+	{
+		rank=same
+		b
+		d
+	}
+	s -> a [label=16]
+	s -> c [label=13]
+	c -> a [label=4]
+	a -> c [label=10]
+	a -> b [label=12]
+	c -> d [label=14]
+	d -> b [label=7]
+	b -> d [label=6]
+	b -> t [label=20]
+	d -> t [label=4]
+}

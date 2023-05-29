@@ -1,0 +1,50 @@
+digraph "fruit wholesaler model" {
+	rankdir=TB
+	g [label=grower]
+	subgraph months {
+		rank=LR
+		aug
+		sep
+		oct
+		nov
+		dec
+		jan
+		feb
+		mar
+		apr
+		may
+		jun
+		jul
+	}
+	d [label=demand]
+	aug -> sep [label=s_1]
+	sep -> oct [label=s_2]
+	oct -> nov [label=s_3]
+	nov -> dec [label=s_4]
+	dec -> jan [label=s_5]
+	jan -> feb [label=s_6]
+	feb -> mar [label=s_7]
+	mar -> apr [label=s_8]
+	apr -> may [label=s_9]
+	may -> jun [label=s_10]
+	jun -> jul [label=s_11]
+	g -> aug [label=g_1]
+	g -> sep [label=g_2]
+	g -> oct [label=g_3]
+	g -> nov [label=g_4]
+	g -> dec [label=g_5]
+	g -> jan [label=g_6]
+	g -> feb [label=g_7]
+	aug -> d [label=d_1]
+	sep -> d [label=d_2]
+	oct -> d [label=d_3]
+	nov -> d [label=d_4]
+	dec -> d [label=d_5]
+	jan -> d [label=d_6]
+	feb -> d [label=d_7]
+	mar -> d [label=d_8]
+	apr -> d [label=d_9]
+	may -> d [label=d_10]
+	jun -> d [label=d_11]
+	jul -> d [label=d_12]
+}
