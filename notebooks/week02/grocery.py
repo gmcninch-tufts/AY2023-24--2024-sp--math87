@@ -1,5 +1,5 @@
 import numpy as np
-from digraph import Edge,LowerBound,UpperBound,networkFlow
+from networkflows import Edge,LowerBound,UpperBound,networkFlow
 import math
 
 import scipy.optimize
@@ -59,14 +59,12 @@ ee = [ *[Edge(("grower",pd.month),
          for pd0,pd1 in zip(pdarr,pdarr[1:])]     # storage
        ]
 
-def report(res):
-    ## the argument ``res`` should be an instance of the class ``scipy.optimize.OptimizeResult`` -- 
-    ## i.e. a value of the form returned by ``linprog``
-    ##
-    x=res.x
-    profit  = (-1)*res.fun
+def report(nf: networkFlow) -> str:
+    lp = nf.runLinProgr(maximize=True)
+    x=lp.x
+    profit  = (-1)*lp.fun
     return "\n".join(
-        [f"linprog succeeded? {res.success}",
+        [f"linprog succeeded? {lp.success}",
          f"Optimal profit ${profit:.2f}",
          "This is achieved by the following strategy:\n",
          *[f"purchase in kg for {months[i]}: {x[i]:.2f}" for i in range(12)],
@@ -79,10 +77,9 @@ def report(res):
 
 nf = networkFlow(vv,ee,title="grocery",source="grower",sink="demand")
 
-nf.drawGraph().render()
+nf.makeGraph().render()
 
-lp = nf.runLinProgr(maximize=True)
-print(report(lp))
+print(report(nf))
 
 
 

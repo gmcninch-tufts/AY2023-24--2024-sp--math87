@@ -28,25 +28,23 @@ ee = [*[ Edge(('source',clean[d]),   label=f"b{d}", val=5) # bought
        ]
       ]
 
-def report(result: scipy.optimize.OptimizeResult) -> str:
-    """the argument ``result`` should be an instance of the class ``scipy.optimize.OptimizeResult`` -- 
-    i.e. a value of the form returned by ``linprog``
-    """
-    x = result.x
-    costs = result.fun
+def report(nf: networkFlow) -> str:
+    lp=nf.runLinProgr()
+    x = lp.x
+    costs = lp.fun
     return "\n".join(
-        [f"linprog succeeded? {result.success}",
+        [f"linprog succeeded? {lp.success}",
          f"Optimal tablecloth expenses for the week are ${costs:.2f}",
          "This is achieved by the following strategy:",
          *[f"purchase on day {i}: {x[i]:.2f}" for i in range(7)],
          "",
-         *[f"use on day {i+1}: {x[6+i]:.2f}" for i in range(7)],
+         *[f"use on day {i}: {x[7+i]:.2f}" for i in range(7)],
          "",
-         *[f"carry-over from day {i} to day {i+1}: {x[13+i]:.2f}" for i in range(6)],
+         *[f"carry-over from day {i} to day {i+1}: {x[14+i]:.2f}" for i in range(6)],
          "",
-         *[f"fast laundry on day {i}: {x[19+i]:.2f}" for i in range(6)],
+         *[f"fast laundry on day {i}: {x[20+i]:.2f}" for i in range(6)],
          "",
-         *[f"slow laundry on day {i}: {x[19+i]:.2f}" for i in range(5)],
+         *[f"slow laundry on day {i}: {x[26+i]:.2f}" for i in range(5)],
          ])
         
 
@@ -55,5 +53,4 @@ nf = networkFlow(vv,ee,title="Restaurant",source='source',sink='d6 used')
 
 nf.makeGraph().render()
 
-lp = nf.runLinProgr()
-print(report(lp))
+print(report(nf))

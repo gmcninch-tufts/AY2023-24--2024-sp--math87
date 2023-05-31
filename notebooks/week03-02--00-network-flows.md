@@ -356,13 +356,13 @@ vv = [['source'], clean, used]
 
 ee = [*[ Edge(('source',clean[d]),   label=f"b{d}", val=5) # bought
          for d in range(7)
-        ],   
+        ],
       *[ Edge((clean[d],used[d]),    label=f"u{d}", bd=LowerBound(tt[d])) # usage
          for d in range(7)
-        ],  
+        ],
       *[ Edge((clean[d],clean[d+1]), label=f"c{d}" )       # carry-over
         for d in range(6)
-       ],  
+       ],
       *[ Edge((used[d],clean[d+1]),  label=f"f{d}", val=2) # fast laundry
         for d in range(6)
        ], 
@@ -371,14 +371,12 @@ ee = [*[ Edge(('source',clean[d]),   label=f"b{d}", val=5) # bought
        ]
       ]
 
-def report(result: scipy.optimize.OptimizeResult) -> str:
-    """the argument ``result`` should be an instance of the class ``scipy.optimize.OptimizeResult`` -- 
-    i.e. a value of the form returned by ``linprog``
-    """
-    x = result.x
-    costs = result.fun
+def report(nf: networkFlow) -> str:
+    lp=nf.runLinProgr()
+    x = lp.x
+    costs = lp.fun
     return "\n".join(
-        [f"linprog succeeded? {result.success}",
+        [f"linprog succeeded? {lp.success}",
          f"Optimal tablecloth expenses for the week are ${costs:.2f}",
          "This is achieved by the following strategy:",
          *[f"purchase on day {i}: {x[i]:.2f}" for i in range(7)],
@@ -389,7 +387,7 @@ def report(result: scipy.optimize.OptimizeResult) -> str:
          "",
          *[f"fast laundry on day {i}: {x[19+i]:.2f}" for i in range(6)],
          "",
-         *[f"slow laundry on day {i}: {x[19+i]:.2f}" for i in range(5)],
+         *[f"slow laundry on day {i}: {x[25+i]:.2f}" for i in range(5)],
          ])
         
 
@@ -398,8 +396,7 @@ nf = networkFlow(vv,ee,title="Restaurant",source='source',sink='d6 used')
 
 nf.makeGraph().render()
 
-lp = nf.runLinProgr()
-print(report(lp))
+print(report(nf))
 ```
 :::
 

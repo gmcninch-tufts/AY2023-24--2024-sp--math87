@@ -1,4 +1,4 @@
-digraph grocery {
+grodigraph grocery {
 	rankdir=LR
 	{
 		rank=same
