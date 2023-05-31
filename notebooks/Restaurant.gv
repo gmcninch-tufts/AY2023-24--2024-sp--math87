@@ -1,0 +1,58 @@
+digraph Restaurant {
+	rankdir=LR
+	{
+		rank=same
+		source
+	}
+	{
+		rank=same
+		"d0 clean"
+		"d1 clean"
+		"d2 clean"
+		"d3 clean"
+		"d4 clean"
+		"d5 clean"
+		"d6 clean"
+	}
+	{
+		rank=same
+		"d0 used"
+		"d1 used"
+		"d2 used"
+		"d3 used"
+		"d4 used"
+		"d5 used"
+		"d6 used"
+	}
+	source -> "d0 clean" [label=b0]
+	source -> "d1 clean" [label=b1]
+	source -> "d2 clean" [label=b2]
+	source -> "d3 clean" [label=b3]
+	source -> "d4 clean" [label=b4]
+	source -> "d5 clean" [label=b5]
+	source -> "d6 clean" [label=b6]
+	"d0 clean" -> "d0 used" [label=u0]
+	"d1 clean" -> "d1 used" [label=u1]
+	"d2 clean" -> "d2 used" [label=u2]
+	"d3 clean" -> "d3 used" [label=u3]
+	"d4 clean" -> "d4 used" [label=u4]
+	"d5 clean" -> "d5 used" [label=u5]
+	"d6 clean" -> "d6 used" [label=u6]
+	"d0 clean" -> "d1 clean" [label=c0]
+	"d1 clean" -> "d2 clean" [label=c1]
+	"d2 clean" -> "d3 clean" [label=c2]
+	"d3 clean" -> "d4 clean" [label=c3]
+	"d4 clean" -> "d5 clean" [label=c4]
+	"d5 clean" -> "d6 clean" [label=c5]
+	"d0 used" -> "d1 clean" [label=f0]
+	"d1 used" -> "d2 clean" [label=f1]
+	"d2 used" -> "d3 clean" [label=f2]
+	"d3 used" -> "d4 clean" [label=f3]
+	"d4 used" -> "d5 clean" [label=f4]
+	"d5 used" -> "d6 clean" [label=f5]
+	"d0 used" -> "d2 clean" [label=s0]
+	"d1 used" -> "d3 clean" [label=s1]
+	"d2 used" -> "d4 clean" [label=s2]
+	"d3 used" -> "d5 clean" [label=s3]
+	"d4 used" -> "d6 clean" [label=s4]
+}

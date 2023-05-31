@@ -1,0 +1,61 @@
+digraph grocery {
+	rankdir=LR
+	{
+		rank=same
+		grower
+	}
+	{
+		rank=same
+		aug
+		sep
+		oct
+		nov
+		dec
+		jan
+		feb
+		mar
+		apr
+		may
+		jun
+		jul
+	}
+	{
+		rank=same
+		demand
+	}
+	grower -> aug [label=g0]
+	grower -> sep [label=g1]
+	grower -> oct [label=g2]
+	grower -> nov [label=g3]
+	grower -> dec [label=g4]
+	grower -> jan [label=g5]
+	grower -> feb [label=g6]
+	grower -> mar [label=g7]
+	grower -> apr [label=g8]
+	grower -> may [label=g9]
+	grower -> jun [label=g10]
+	grower -> jul [label=g11]
+	aug -> demand [label=d0]
+	sep -> demand [label=d1]
+	oct -> demand [label=d2]
+	nov -> demand [label=d3]
+	dec -> demand [label=d4]
+	jan -> demand [label=d5]
+	feb -> demand [label=d6]
+	mar -> demand [label=d7]
+	apr -> demand [label=d8]
+	may -> demand [label=d9]
+	jun -> demand [label=d10]
+	jul -> demand [label=d11]
+	aug -> sep [label=s0]
+	sep -> oct [label=s1]
+	oct -> nov [label=s2]
+	nov -> dec [label=s3]
+	dec -> jan [label=s4]
+	jan -> feb [label=s5]
+	feb -> mar [label=s6]
+	mar -> apr [label=s7]
+	apr -> may [label=s8]
+	may -> jun [label=s9]
+	jun -> jul [label=s10]
+}

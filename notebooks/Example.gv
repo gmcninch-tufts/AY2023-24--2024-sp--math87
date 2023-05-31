@@ -1,0 +1,28 @@
+digraph Example {
+	rankdir=LR
+	{
+		rank=same
+		S
+	}
+	{
+		rank=same
+		a
+		b
+	}
+	{
+		rank=same
+		c
+		d
+	}
+	{
+		rank=same
+		T
+	}
+	S -> a [label=g1]
+	S -> b [label=g2]
+	S -> d [label=g3]
+	a -> c [label=g4]
+	b -> c [label=g5]
+	c -> T [label=g6]
+	d -> T [label=g7]
+}
