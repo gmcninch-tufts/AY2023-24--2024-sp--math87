@@ -1,9 +1,7 @@
 import numpy as np
-from digraph import Edge,LowerBound,UpperBound,networkFlow
+from networkflows import Edge,LowerBound,UpperBound,networkFlow
 import math
-
 import scipy.optimize
-import itertools
 
 tt = np.array([10,10,15,20,40,40,30])
 
@@ -13,28 +11,19 @@ used  = [ f"d{d} used"  for d in range(7) ]
 vv = [['source'], clean, used]
 
 
-ee = [*[ Edge(('source',clean[d]),        # bought
-              label=f"b{d}",
-              val=5)
+ee = [*[ Edge(('source',clean[d]),   label=f"b{d}", val=5) # bought
          for d in range(7)
         ],   
-      *[ Edge((clean[d],used[d]),         # usage
-              label=f"u{d}",
-              bd=LowerBound(tt[d]))
+      *[ Edge((clean[d],used[d]),    label=f"u{d}", bd=LowerBound(tt[d])) # usage
          for d in range(7)
         ],  
-      *[ Edge((clean[d],clean[d+1]),      # carry-over
-             label=f"c{d}" )
+      *[ Edge((clean[d],clean[d+1]), label=f"c{d}" )       # carry-over
         for d in range(6)
        ],  
-      *[ Edge((used[d],clean[d+1]),       # fast laundry
-             label=f"f{d}",
-             val=2)
+      *[ Edge((used[d],clean[d+1]),  label=f"f{d}", val=2) # fast laundry
         for d in range(6)
        ], 
-      *[ Edge((used[d],clean[d+2]),       # slow laundry
-             label=f"s{d}",
-             val=1)
+      *[ Edge((used[d],clean[d+2]),  label=f"s{d}", val=1) # slow laundry
         for d in range(5)
        ]
       ]
@@ -64,7 +53,7 @@ def report(result: scipy.optimize.OptimizeResult) -> str:
 
 nf = networkFlow(vv,ee,title="Restaurant",source='source',sink='d6 used')
 
-nf.drawGraph().render()
+nf.makeGraph().render()
 
 lp = nf.runLinProgr()
 print(report(lp))

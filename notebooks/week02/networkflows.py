@@ -8,21 +8,19 @@ from dataclasses import dataclass, field
 ## "standard basis vector"
 ##
 def sbv(index,size):
+    """Return the `index`th standard basis vector of size `size`. So
+    for example 
+    sbv(0,3) == np.array([1.0,0.0,0.0]).
+    """
     return np.array([1.0 if i == index else 0.0 for i in range(size)])
-
-def from_indices(dat,length):
-    ## dat is a list [(c,i).,,,] of pairs; the pair (c,i) determines
-    ## the vector c*e_i where e_i is the ith standard basis vector
-    ## from_indices(dat,length) function returns the sum of the vectors 
-    ## specified by the list dat
-    return sum([c*sbv(i,length) for (c,i) in dat],np.zeros(length))
-
-## >>> from_indices([(2,3),(3.5,6)],7)
-## array([ 0.,  0., 2., 0.,  0.,  3.5,  0.])
 
 #-----------------------------
 
 def flatten(ll : list[list[any]]) -> list[any]:
+    """flatten a list of lists.
+    For example
+    flatten([["a","b"],[1,[2,3]]) == ["a","b",1,[2,3]]
+    """
     return [ i for l in ll for i in l ]
 
 @dataclass
@@ -48,7 +46,7 @@ class Digraph:
     edges: list[Edge] 
     title: str
 
-    def drawGraph(self):
+    def makeGraph(self):
         dot = GVDigraph(self.title)
         dot.attr(rankdir='LR')
 
@@ -70,7 +68,7 @@ class Digraph:
         return dot
         
     
-    def drawSubgraph(self,vertices:list[str] = None):
+    def makeSubgraph(self,vertices:list[str] = None):
         dot = GVDigraph(self.title)
         dot.attr(rankdir='LR')
 
@@ -105,9 +103,9 @@ class Digraph:
     def conservationLaw(self,vertex: str):
         ii = list(map(lambda x: x.label,self.getIncoming(vertex)))
         oo = list(map(lambda x: x.label,self.getOutgoing(vertex)))
-        return "".join([ii.__repr__(),
+        return "".join([" + ".join([f"{i}" for i in ii]),
                         " - ",
-                        oo.__repr__(),
+                        " - ".join([f"{o}" for o in oo]),
                         " = 0"])
 
     
@@ -162,7 +160,7 @@ class networkFlow(Digraph):
         return [self.conservationVector(v) for v in self.internalVertices()]
 
 
-    def conLaws(self):
+    def conservationLaws(self):
         return [self.conservationLaw(v) for v in self.internalVertices()]
     
     def runLinProgr(self,maximize=False):
@@ -188,11 +186,11 @@ ee = [ Edge(('S','a'),'g1',bd=LowerBound(2),val=10),
        Edge(('d','T'),'g7')
        ]
 
-#nf = Digraph(vertices=vv,edges=ee)
+
 nf = networkFlow(vertices=vv,edges=ee,title='Example',source='S',sink='T')
 
 nf.format='png'
-nf.drawGraph().render()
+nf.makeGraph().render()
 
 #nf.conservationMatrix()
 #nf.allbounds()
