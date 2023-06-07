@@ -13,28 +13,28 @@ CSS_PANDOC="assets/pandoc.css"
 
 VPATH = .:pacing:resources:problem-sets:notebooks
 
-resources = $(patsubst %.md,%.html,$(wildcard resources/*.md)) \
-            $(patsubst %.md,%.pdf,$(wildcard resources/*.md)) \
+content_dirs=notebooks problem-sets
+logistic_dirs=resources pacing
 
-pacing_md   = $(wildcard pacing/*.md)
+contents=$(wildcard *md,$(foreach fd, $(content_dirs), $(fd)/*.md))
 
-pacing_html = $(patsubst %.md,%.html,$(wildcard pacing/*.md)) 
-pacing_pdf  = $(patsubst %.md,%.pdf,$(wildcard pacing/*.md)) 
+contents_nb=$(contents:.md=.ipynb)
+contents_html=$(contents:.md=.html)
+contents_pdf=$(contents:.md=.pdf)
 
-psets = $(patsubst %.md,%.html,$(wildcard problem-sets/*.md)) \
-        $(patsubst %.md,%.pdf, $(wildcard problem-sets/*.md)) 
+logistics=$(wildcard *md,$(foreach fd, $(logistic_dirs), $(fd)/*.md))
+logistics_pdf=$(logistics:.md=.pdf)
+logistics_html=$(logistics:.md=.html)
 
-
+pacing_md = $(wildcard pacing/*.md)
 
 notebooks = $(patsubst %.md,%.ipynb,$(wildcard notebooks/*.md)) 
 
 
-all: pacing resources psets notebooks
+all: contents logistics
 
-pacing: $(pacing_md) $(pacing_html) $(pacing_pdf)
-resources: $(resources)
-psets: $(psets)
-notebooks: $(notebooks)
+logistics: logistics_pdf logistics_html
+contents: $(contents_nb) $(contents_html) $(contents_pdf)
 
 MJ=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js
 # MJ=http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML
@@ -45,40 +45,45 @@ pacing/%.md: Math135-AY2023-spring.dhall topics/lectures.dhall topics/recitation
 	$(CMD) $<	
 
 
-pacing/%.html resources/%.html: %.md
+%.html: %.md
 	$(PD) $<  --standalone --css=$(CSS_DEFAULT) --mathjax=$(MJ) --to html  -o $@
 
-pacing/%.pdf resources/%.pdf: %.md
+%.pdf: %.md
 	$(PD) --self-contained --pdf-engine=xelatex  $<  -o $@
 
 
-problem-sets/%.html: %.md
-	$(PD)  --citeproc --self-contained --to html --resource-path=$(RP) -t latex $<  -o $@
+# problem-sets/%.html: %.md
+# 	$(PD)  --citeproc --self-contained --to html --resource-path=$(RP) -t latex $<  -o $@
 
 
-problem-sets/%.pdf: %.md
-	$(PD)  --citeproc --self-contained --pdf-engine=xelatex --resource-path=$(RP) -t latex $<  -o $@
+# problem-sets/%.pdf: %.md
+# 	$(PD)  --citeproc --self-contained --pdf-engine=xelatex --resource-path=$(RP) -t latex $<  -o $@
 
 
 notebooks/%.ipynb: %.md
 	$(PD) $< --to ipynb  -o $@
 
 
-problem-sets/%.html  lecture-summaries/%.html: %.md
-	$(PD) $<  --citeproc  --standalone --css=$(CSS_DEFAULT) --mathjax=$(MJ) --to html  -o $@
+.PHONY: echoes
+
+echoes:
+	@echo $(contents_nb)
+	@echo $(contents_html)
+	@echo $(contents_pdf)
+#	@echo $(lectures2)
+#	@echo $(PDF)
+
 
 .PHONY = clean
 
-clean: clean_pdf clean_resources clean_psets clean_lectures
+clean: clean_nb clean_pdf clean_html
 
-clean_pacing:
-	-rm -f $(pacing_html) $(pacing_pdf)
+clean_nb:
+	-rm -f $(contents_nb)
 
-clean_psets:
-	-rm -f $(psets)
+clean_pdf:
+	-rm -f $(logistics_pdf) $(contents_pdf)
 
-clean_rep_thy:
-	-rm -f $(rep_thy)
+clean_html:
+	-rm -f $(logistics_html) $(contents_html)
 
-clean_resources:
-	-rm -f $(resources)

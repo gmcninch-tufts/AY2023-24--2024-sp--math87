@@ -36,11 +36,12 @@ jupyter:
 # Overview
 
 So far we have looked at a few examples of linear programs. The key
-step in modeling these problems is to write down the program itself.
+step in modeling these problems is to write down the linear program itself.
 
-As we saw, for simple programs, such as the carpenter problem, we can
-figure it out geometrically.  There were only a few variables and a
-few obvious constraints and it was easy to check all the “vertices.”
+As we saw, for simple linear programs -- such as the carpenter example
+-- we can figure it out geometrically.  In that case, there were only
+a few variables and a few obvious constraints, and it was easy to find
+and check all the “vertices”.
 
 :::
 
@@ -57,12 +58,38 @@ elements of the set $V$ are the *vertices* of the graph, and where $E
 ⊂ V × V$ are the *edges* of $G$. Thus, an element $e = (a,b) ∈ E$
 represents a directed edge from vertex $a$ to vertex $b$.
 
-A node is a *source* if it only appears in outgoing edges, and a node
+We can produce diagrams for directed graphs using the program
+[`graphviz`](https://graphviz.org/) (and a corresponding python
+library [`python-graphviz`](https://github.com/xflr6/graphviz)).
+
+Let's look at a simple graph:
+:::
+
+::: {.cell .code}
+``` python
+from graphviz import Digraph as GVDigraph
+
+dot = GVDigraph("example")
+dot.attr(rankdir='LR')
+
+vertices = ['S', '1', '2', '3', 'T']
+edges = [('S','1'),('S','2'),('1','3'),('S','3'),('2','T'),('3','T')]
+
+for v in vertices:
+  dot.node(v)
+  
+for (a,b) in edges:
+  dot.edge(a,b)
+  
+dot
+```
+:::
+
+::: {.cell}
+A vertex is a *source* if it only appears in outgoing edges, and a vertex
 is a *sink* if it only appears in incoming edges.
 
-
-For example, `S` is a source and `T` is a sink in the following
-directed graph.
+In the preceding example, `S` is a source and `T` is a sink.
 :::
 
 
@@ -247,30 +274,46 @@ class networkFlow(Digraph):
                        b_eq=np.zeros(len(self.internalVertices())),
                        A_ub=A_ub,
                        b_ub = b_ub)
-    
-vv = [ ['S'],['a','b'],['c','d'],['T']]
-ee = [ Edge(('S','a'),'g1',bd=LowerBound(2),val=10),
-       Edge(('S','b'),'g2',bd=LowerBound(2),val=20),
-       Edge(('S','d'),'g3',bd=LowerBound(2),val=30),
-       Edge(('a','c'),'g4'),
-       Edge(('b','c'),'g5'),
-       Edge(('c','T'),'g6',val=-10),
-       Edge(('d','T'),'g7')
+
+```
+:::
+
+::: {.cell}
+
+We can describe our previous example using this code:
+
+:::
+
+::: {.cell .code}
+``` python    
+
+#vertices = ['S', '1', '2', '3', 'T']
+#edges = [('S','1'),('S','2'),('1','3'),('S','3'),('2','T'),('3','T')]
+
+
+vv = [ ['S'],['1','2'],['3'],['T']] 
+ee = [ Edge(('S','1'),'g1'),
+       Edge(('S','2'),'g2'),
+       Edge(('S','3'),'g3'),
+       Edge(('1','3'),'g4'),
+       Edge(('2','T'),'g6'),
+       Edge(('3','T'),'g7')
        ]
 
 #nf = Digraph(vertices=vv,edges=ee)
 nf = networkFlow(vertices=vv,edges=ee,title='Example',source='S',sink='T')
 
 nf.format='png'
-nf.drawGraph().render()
+nf.drawGraph()
+```
+::: 
 
-#nf.conservationMatrix()
-#nf.allbounds()
+
+::: {.cell .code}
+``` python
 nf.runLinProgr()
 ```
-
 :::
-
 
 ::: {.cell}
 
