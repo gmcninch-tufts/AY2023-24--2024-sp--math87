@@ -1,7 +1,12 @@
 
+FILTERS = --lua-filter pandoc-proofs.lua --filter pandoc-xnos --filter pandoc-eqnos --filter pandoc-secnos --filter pandoc-theoremnos
+
+
+MACROS=assets/latex-macros.md
+
 CMD=/home/george/.local/bin/course report
 
-PD=pandoc --from markdown -V linkcolor:red 
+PD=pandoc --standalone --from markdown $(FILTERS) --citeproc -V linkcolor:red $(MACROS)
 GC = google-chrome --headless 
 
 TEX=pdflatex
@@ -28,7 +33,7 @@ logistics_html=$(logistics:.md=.html)
 
 pacing_md = $(wildcard pacing/*.md)
 
-notebooks = $(patsubst %.md,%.ipynb,$(wildcard notebooks/*.md)) 
+notebooks = $(patsubst %.md,%.ipynb,$(wildcard notebooks-md/*.md)) 
 
 
 all: contents logistics
@@ -41,15 +46,15 @@ MJ=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js
 
 RP=.:problem-sets:lecture-summaries:exam1:exam2
 
-pacing/%.md: Math135-AY2023-spring.dhall topics/lectures.dhall topics/recitations.dhall topics/assignments.dhall
+%.md: Math135-AY2023-spring.dhall topics/lectures.dhall topics/recitations.dhall topics/assignments.dhall
 	$(CMD) $<	
 
 
 %.html: %.md
-	$(PD) $<  --standalone --css=$(CSS_DEFAULT) --mathjax=$(MJ) --to html  -o $@
+	$(PD) $< --css=$(CSS_DEFAULT) --mathjax=$(MJ) --to html  -o $@
 
 %.pdf: %.md
-	$(PD) --self-contained --pdf-engine=xelatex  $<  -o $@
+	$(PD) --pdf-engine=xelatex  $<  -o $@
 
 
 # problem-sets/%.html: %.md

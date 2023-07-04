@@ -27,7 +27,7 @@ jupyter:
 ::: {.cell .title}
 # [George McNinch](http://gmcninch.math.tufts.edu) Math 87 - Spring 2024
 
-# § Optimization
+# § Week 1 - Optimization
 :::
 
 ::: {.cell}
@@ -234,6 +234,13 @@ pd.set_option('display.float_format', lambda x: "{:,.2f}".format(x))
 # define an instance of the OilSpillCleanup class, with the default arguments.
 c = OilSpillCleanup()
 
+
+c.report_parameters()
+```
+:::
+
+::: {.cell .code}
+``` python
 # and define a function of two arguments:
 # c, a class of type OilSpillCleanup, and
 # crew_range, a list of integers, to be used as the "number of external crews hired"
@@ -445,7 +452,7 @@ gg=create_graph(c,vlines=[11.23,19])
 :::
 
 ::: {.cell}
-## The interval $(19,\infty)$
+## The interval $(19,∞)$
 
 
 Our computations strongly *suggest* that the costs are not minimized
@@ -459,8 +466,7 @@ given by $a = 500\cdot 280$, $b = 800 \cdot 280$ and $c = 18000$.
 
 Differentiating in $n$, find that $$(\clubsuit) \quad
 \dfrac{dC_{tot}}{dn} = c + \dfrac{b}{(n+1)^2} - \dfrac{a}{(n+1)^2}$$
-since $\dfrac{d}{dn}\left[\dfrac{n}{n+1} \right] = \dfrac{1}{(1+n)^2}
-$.
+since $\dfrac{d}{dn}\left[\dfrac{n}{n+1} \right] = \dfrac{1}{(1+n)^2}$.
 
 For $n \ge 19$ notice that: $$\dfrac{a}{(n+1)^2} \le \dfrac{a}{20^2} =
 350.$$ Since $b$ is non-negative, we see:

@@ -26,20 +26,34 @@ Course material (Week 4): Duality and linear programming
 Duality
 -------
 
-Consider a linear program $\mathcal{L}$ -- in *standard form* -- determined by data $(\mathbf{c} \in \mathbb{R}^{1 \times n},A \in \mathbb{R}^{r \times n},\mathbf{b} \in \mathbb{R}^r)$ that seeks to ``maximize`` the value $\mathbf{c} \cdot \mathbf{x}$ of the *objective* function determined by
-$\mathbf{c} \in \mathbb{R}^{1 \times n}$. The inputs of this linear program are non-negative vectors $\mathbf{x} \in \mathbb{R}^n$, $\mathbf{x} \ge \mathbf{0}$, subject to inequality constraints $A \mathbf{x} \le \mathbf{b}$ determined by $A \in \mathbb{R}^{r \times n}$ and $\mathbf{b} \in \mathbb{R}^r$.
+Consider a linear program $\mathcal{L}$ -- in *standard form* --
+determined by data $(\mathbf{c} \in \mathbb{R}^{1 \times n},A \in
+\mathbb{R}^{r \times n},\mathbf{b} \in \mathbb{R}^r)$ that seeks to
+``maximize`` the value $\mathbf{c} \cdot \mathbf{x}$ of the
+*objective* function determined by $\mathbf{c} \in \mathbb{R}^{1
+\times n}$. The inputs of this linear program are non-negative vectors
+$\mathbf{x} \in \mathbb{R}^n$, $\mathbf{x} \ge \mathbf{0}$, subject to
+inequality constraints $A \mathbf{x} \le \mathbf{b}$ determined by $A
+\in \mathbb{R}^{r \times n}$ and $\mathbf{b} \in \mathbb{R}^r$.
 
-We are going to associate to $\mathcal{L}$ a *new* linear program $\mathcal{L}'$. The linear program $\mathcal{L}'$ we are going to describe is called the *dual* linear program to $\mathcal{L}$; in this context, $\mathcal{L}$ is referred to as the *primal* linear program.
+We are going to associate to $\mathcal{L}$ a *new* linear program
+$\mathcal{L}'$. The linear program $\mathcal{L}'$ we are going to
+describe is called the *dual* linear program to $\mathcal{L}$; in this
+context, $\mathcal{L}$ is referred to as the *primal* linear program.
 
-We first just give the rule describing $\mathcal{L}'$ before trying to motivate the construction.
+We first just give the rule describing $\mathcal{L}'$ before trying to
+motivate the construction.
 
 Definition of $\mathcal{L}'$
 -----------------------------
 
-The linear program $\mathcal{L}'$ dual to $\mathcal{L}$ is determined by the data
-$(\mathbf{b}^T,\mathbf{A}^T,\mathbf{c}^T)$ and it seeks to ``minimize`` the value
-$\mathbf{b}^T \cdot \mathbf{y}$; note that $\mathbf{b}^T \in \mathbb{R}^{1 \times r}$ -- so in this case the variable is a non-negative vector $\mathbf{y} \in \mathbb{R}^r$, $\mathbf{y} \ge \mathbf{0}$
-subject to the inequality constraint $A^T \mathbf{y} \ge \mathbf{c}^T$ (note the direction of the inequality!).
+The linear program $\mathcal{L}'$ dual to $\mathcal{L}$ is determined
+by the data $(\mathbf{b}^T,\mathbf{A}^T,\mathbf{c}^T)$ and it seeks to
+``minimize`` the value $\mathbf{b}^T \cdot \mathbf{y}$; note that
+$\mathbf{b}^T \in \mathbb{R}^{1 \times r}$ -- so in this case the
+variable is a non-negative vector $\mathbf{y} \in \mathbb{R}^r$,
+$\mathbf{y} \ge \mathbf{0}$ subject to the inequality constraint $A^T
+\mathbf{y} \ge \mathbf{c}^T$ (note the direction of the inequality!).
 
 Speaking roughly, in the dual $\mathcal{L}'$, each of $\mathbf{c}$, $A$, and $\mathbf{b}$ have been replaced by their transpose, $\mathbf{c}$ and $\mathbf{b}$ have "swapped roles", and the inequality direction in the constraint has been reversed.
 

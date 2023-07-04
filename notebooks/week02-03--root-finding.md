@@ -133,9 +133,9 @@ Also:
 ::: {.cell}
 # Example
 
-For example, we can use ‘bisect‘ to approximate the roots of \\(f(x) =
-x^2 - x -1\\).  Recall that those roots are \\[\dfrac{1 \pm
-\sqrt{5}}{2}\\]
+For example, we can use ‘bisect‘ to approximate the roots of $$f(x) =
+x^2 - x -1$$.  Recall that those roots are 
+$$\dfrac{1 \pm \sqrt{5}}{2}.$$
 
 :::
 
@@ -169,8 +169,8 @@ print(report)
 
 # Example
 
-We can estimate zeros of the \\(\sin\\) function - here we get an
-approximation to \\(\pi\\), since we happen to know that $\sin(1) >0$,
+We can estimate zeros of the $\sin$ function - here we get an
+approximation to $\pi$, since we happen to know that $\sin(1) >0$,
 $\sin(4)<0$, and $\pi$ is the unique root of $\sin(x)=0$ between $1$
 and $4$:
 
@@ -194,10 +194,10 @@ stored by ``numpy``?
 
 # Example 
 
-And we can estimate the transcendental number \\(e = \exp(1)\\)
-e.g. by finding roots of the function \\(f(x) = 1 - \ln(x)\\):
+And we can estimate the transcendental number $e = \exp(1)$
+e.g. by finding roots of the function $f(x) = 1 - \ln(x)$:
 
-(**Question**: try comparing the answer with ``np.exp(1)``).
+(**Question**: try comparing the answer with `np.exp(1)`).
 
 :::
 

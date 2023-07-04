@@ -45,32 +45,32 @@ like to describe some general form to help us tackle more problems.
 So let’s describe what is more-or-less the most general form of an
 optimization problem:
 
-Consider an $\mathbf{R}$-valued function $f$ defined for
-$\mathbf{x} \in \mathbf{R}^n$ -- thus, $f:\mathbf{R}^n \to
-\mathbf{R}$.  We want to optimize $f(\mathbf{x})$ subject to a
+Consider an $ℝ$-valued function $f$ defined for
+$\mathbf{x} \in ℝ^n$ -- thus, $f:ℝ^n \to
+ℝ$.  We want to optimize $f(\mathbf{x})$ subject to a
 system of *constraints* defined by some auxiliary data.
 
 We first consider $E$ constraints defined for $1 \le i \le E$
-by functions $g_i:\mathbf{R}^n \to \mathbf{R}$ together with values
-$b_i \in \mathbf{R}$; these constraints
+by functions $g_i:ℝ^n \to ℝ$ together with values
+$b_i \in ℝ$; these constraints
 have the form $$(\heartsuit)_i \quad g_i(\mathbf{x}) \le b_i $$
 
 At the same time, we consider $F$ constraints defined for $1 \le
-j \le F$ by functions $h_j:\mathbf{R}^n \to \mathbf{R}$ together
-with values $c_j \in \mathbf{R}$; these constraints have the form
+j \le F$ by functions $h_j:ℝ^n \to ℝ$ together
+with values $c_j \in ℝ$; these constraints have the form
 $$ (\clubsuit)_j \quad h_j(\mathbf{x}) = c_j $$
 
 Re-capping, the problem is to find the optimal value of $f(\mathbf{x})$ where
-$\mathbf{x}$ ranges over all points in $\mathbf{R}^n$ satisfying
+$\mathbf{x}$ ranges over all points in $ℝ^n$ satisfying
 the constraints $(\heartsuit)_i$ and all constraints $(\clubsuit)_j$.
  
 ---
-Compactly, a *general optimization problem* asks to find the maximum (or minimum) of $f:\mathbf{R}^n \to \mathbf{R}$ for $\mathbf{x} \in \mathbf{R}^n$ subject to
-constraints
-$$\begin{aligned} g_i(\mathbf{x}) & \le b_i & 1 \le i \le E \\
-                   h_j(\mathbf{x}) & = c_j & 1 \le j \le F
-   \end{aligned} $$
-For functions $g_i,h_j:\mathbf{R}^n \to \mathbf{R}$ and scalars $b_i,c_j$.
+
+Compactly, a *general optimization problem* asks to find the maximum
+(or minimum) of $f:ℝ^n \to ℝ$ for $\mathbf{x} \in ℝ^n$ subject to
+constraints $$\begin{aligned} g_i(\mathbf{x}) & \le b_i & 1 \le i \le
+E \\ h_j(\mathbf{x}) & = c_j & 1 \le j \le F \end{aligned}$$ For
+functions $g_i,h_j:ℝ^n \to ℝ$ and scalars $b_i,c_j$.
 
 :::
 
@@ -90,8 +90,8 @@ $(\heartsuit)_i$ or $(\clubsuit)_j$.
 - Our older examples all (essentially) have this form:
 
   - For example, single-variable optimization amounts to the case $n
-    =1$ - i.e. $f$ is a function $\mathbf{R} \to
-    \mathbf{R}$. Typically we optimize on an interval -- for example
+    =1$ - i.e. $f$ is a function $ℝ \to
+    ℝ$. Typically we optimize on an interval -- for example
     we might want to optimize $f$ for $x$ in the closed interval
     $[a,b]$. Then one of the constraints has the form $x \le b$ (so
     this constraint has the form $(\heartsuit)$, $g_1$ is just the
@@ -286,12 +286,12 @@ There are roughly $3 \times 10^7$ seconds in a year, so a computer
 that can evaluate the function at a pair $(t,b)$ at a rate of once per
 nanosecond ($10^{-9}$ seconds) would take
 
-\\begin{aligned} \approx & \left(2 \times 10^{40} \text{operations}
+$$\begin{aligned} \approx & \left(2 \times 10^{40} \text{operations}
 \right)\cdot \left (10^{-9} \dfrac{\text{seconds}}{\text{operation}}
 \right)\cdot \left(\dfrac{1}{3 \times 10^7}
 \dfrac{\text{years}}{\text{second}}\right)& \\ = & \left( \dfrac{2}{3}
 \times 10^{24} \right) = 6.\overline{66} \times 10^{23} \quad
-\text{years} & \end{aligned} -- i.e. more than $6 × 10^{23}$ years to
+\text{years} & \end{aligned}$$ -- i.e. more than $6 × 10^{23}$ years to
 complete the task.
 
 Rather than wait so long, we are going to study an algorithm that
@@ -306,32 +306,32 @@ permits us to ignore some of the vertices.
 Let's take a moment and describe linear programming problems using
 notation from *linear algebra*.  If there are $n$ variables $x_i$, we
 write $\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n
-\end{bmatrix} \in \mathbf{R}^n$ for the corresponding "variable
+\end{bmatrix} \in ℝ^n$ for the corresponding "variable
 vector".
 
-More generally, we denote by $\mathbf{R}^{m \times n}$ the space of $m
+More generally, we denote by $ℝ^{m \times n}$ the space of $m
 \times n$ matrices -- i.e. matrices with $m$ rows and $n$ columns;
 thus
 
-$$\mathbf{R}^{m \times n} = \left \{ 
+$$ℝ^{m \times n} = \left \{ 
 \begin{pmatrix} 
 a_{11} & a_{12} & \cdots & a_{1n} \\
 a_{21} & a_{22} & \cdots & a_{2n} \\
 \vdots & \vdots & \ddots & \vdots \\
 a_{m1} & a_{m2} & \cdots & a_{mn} \\
-\end{pmatrix} \ \bigg \vert\ a_{ij} \in \mathbf{R} \right \} $$
+\end{pmatrix} \ \bigg \vert\ a_{ij} \in ℝ \right \} $$
 
-Now, a linear function $\mathbf{R}^n \to \mathbf{R}$ is given by a $1
+Now, a linear function $ℝ^n \to ℝ$ is given by a $1
 \times n$ matrix -- i.e. a row vector $$\mathbf{c} = \begin{bmatrix}
-c_1 & c_2 & \cdots & c_n\end{bmatrix} \in \mathbf{R}^{1 \times n}.$$
+c_1 & c_2 & \cdots & c_n\end{bmatrix} \in ℝ^{1 \times n}.$$
 
-We will usually reserve the symbol $\mathbf{R}^n$ to indicate the
-space $\mathbf{R}^{n \times 1}$ of **column vectors**; of course, we
+We will usually reserve the symbol $ℝ^n$ to indicate the
+space $ℝ^{n \times 1}$ of **column vectors**; of course, we
 can view the row vector $\mathbf{c}$ as the **transpose** of a column
 vector, if convenient.
 
-The value of the linear function $\mathbf{R}^n \to \mathbf{R}$
-determined by $\mathbf{c}$ is given for $\mathbf{x} \in \mathbf{R}^n$
+The value of the linear function $ℝ^n \to ℝ$
+determined by $\mathbf{c}$ is given for $\mathbf{x} \in ℝ^n$
 by the rule $$\mathbf{x} \mapsto \mathbf{c} \cdot \mathbf{x} =
 \sum_{i=1}^n c_i x_i$$ where $\mathbf{c} \cdot \mathbf{x}$ denotes the
 *matrix product* (which looks suspiciously like the *dot product*, of
@@ -341,7 +341,7 @@ Now, for a general optimization problem, there are inequality
 constraints, and equality constraints. In the setting of linear
 programming, we further stipulate:
 - all constraints are given by linear functions, which are determined
-  (as above) by column vectors in $\mathbf{R}^n$.
+  (as above) by column vectors in $ℝ^n$.
 - we only consider *inequality constraints*. 
 
 We'll explain below why *equality constraints* aren't needed in linear
@@ -358,7 +358,7 @@ We now pause to fix some *notation:*
 Suppose that the inequality constraints are determined by linear
 functions corresponding to vectors $$\mathbf{a}_1 = \begin{bmatrix}
 a_{1,1} & a_{1,2} & \cdots & a_{1,n} \end{bmatrix},
-\mathbf{a}_2,\cdots,\mathbf{a}_r \in \mathbf{R}^{1 \times n}$$ and
+\mathbf{a}_2,\cdots,\mathbf{a}_r \in ℝ^{1 \times n}$$ and
 scalars $b_i$ for $1 \le i \le r$.
 
 The $i$-th inequality constraint requires that $$\mathbf{a}_i \cdot
@@ -367,14 +367,14 @@ The $i$-th inequality constraint requires that $$\mathbf{a}_i \cdot
 Now form the $r \times n$ matrix $A$ whose rows are given by the
 vectors $\mathbf{a}_i$: $$A = \begin{pmatrix} \mathbf{a}_1 \\
 \mathbf{a}_2 \\ \vdots \\ \mathbf{a}_r\end{pmatrix}$$ The product $A
-\cdot \mathbf{x} \in \mathbf{R}^r$ is given by $$A \cdot \mathbf{x} =
+\cdot \mathbf{x} \in ℝ^r$ is given by $$A \cdot \mathbf{x} =
 \begin{pmatrix} \mathbf{a}_1 \\ \mathbf{a}_2 \\ \vdots \\ \mathbf{a}_r
 \end{pmatrix}\cdot \mathbf{x} = \begin{pmatrix} \mathbf{a}_1 \cdot
 \mathbf{x} \\ \mathbf{a}_2 \cdot \mathbf{x} \\ \vdots \\ \mathbf{a}_r
 \cdot \mathbf{x} \end{pmatrix} $$
 
 For any $m \ge 1$, we declare that two vectors $\mathbf{y}$ and
-$\mathbf{z}$ of $\mathbf{R}^m$ satisfy $\mathbf{y} \le \mathbf{z}$ if
+$\mathbf{z}$ of $ℝ^m$ satisfy $\mathbf{y} \le \mathbf{z}$ if
 and only if $y_i \le z_i$ for each $1 \le i \le m$. With this
 convention, the inequality constraints determined by the
 $\mathbf{a}_i$ and $b_i$ can be written: $$A \cdot \mathbf{x} \le
@@ -390,21 +390,21 @@ b_r\end{bmatrix}.$$
 
 Recapitulating, a **linear programming problem** is determined by the
 number $n$ of variables, the choice of vectors $\mathbf{c},
-\mathbf{a}_1, \mathbf{a}_2,\cdots,\mathbf{a}_r \in \mathbf{R}^{1
+\mathbf{a}_1, \mathbf{a}_2,\cdots,\mathbf{a}_r \in ℝ^{1
 \times n}$ and the choice of scalars $b_1,\dots,b_r$.
 
 The goal is to maximize $\mathbf{c} \cdot \mathbf{x}$ subject to the
 constraint $$\mathbf{A} \cdot \mathbf{x} \le \mathbf{b}$$ where $A =
 \begin{pmatrix} \mathbf{a}_1 \\ \mathbf{a}_2 \\ \vdots \\ \mathbf{a}_r
 \end{pmatrix}$ is the $r \times n$ matrix whose rows are the
-row-vectors $\mathbf{a}_i$ and $\mathbf{b} \in \mathbf{R}^r$ has
+row-vectors $\mathbf{a}_i$ and $\mathbf{b} \in ℝ^r$ has
 entries $b_i$.
 
 We say that the linear programming problem is posed in standard form
 if it has this form.
 
-* **Remark**: if $\mathbf{a} \in \mathbf{R}^{1 \times n}$ and $b \in
-\mathbf{R}$, an inequality constraint of the form $$(\clubsuit) \quad
+* **Remark**: if $\mathbf{a} \in ℝ^{1 \times n}$ and $b \in
+ℝ$, an inequality constraint of the form $$(\clubsuit) \quad
 \mathbf{a} \cdot \mathbf{x} \ge b$$ can be rewritten in "standard
 form" by taking $\mathbf{\widetilde a} = -\mathbf{a}$ and $\widetilde
 b = -b$; then $(\clubsuit)$ is equivalent to $$\mathbf{\widetilde a}
@@ -418,42 +418,51 @@ b = -b$; then $(\clubsuit)$ is equivalent to $$\mathbf{\widetilde a}
 
 Consider a *linear programming problem* as above, but suppose also
 that we imposed *equality constraints* determined by vectors
-$$\mathbf{b}_1 ,\mathbf{b}_2,\cdots,\mathbf{b}_s$$ in $\mathbf{R}^{1
+$$\mathbf{b}_1 ,\mathbf{b}_2,\cdots,\mathbf{b}_s$$ in $ℝ^{1
 \times n}$ and the scalar values $$\gamma_1,\gamma_2,\cdots,\gamma_s$$
 
 In other words, the $i$th equality constraint requires that
-$$(\clubsuit) \quad \mathbf{b}_i \cdot \mathbf{x} = \gamma_i $$ Now
+
+$$(\clubsuit) \quad \mathbf{b}_i \cdot \mathbf{x} = \gamma_i$$
+
+Now
 form the $s \times n$ matrix $B$ whose rows are the $\mathbf{b}_i$:
+
 $$B = \begin{pmatrix} \mathbf{b}_1 \\ \mathbf{b}_2 \\ \vdots \\
-\mathbf{b}_s \end{pmatrix}$$ The product $B \cdot \mathbf{x} \in
-\mathbf{R}^s $ is given by $$B \cdot \mathbf{x} = \begin{pmatrix}
-\mathbf{b}_1 \\ \mathbf{b}_2 \\ \vdots \\ \mathbf{b}_s
-\end{pmatrix}\cdot \mathbf{x} = \begin{pmatrix} \mathbf{b}_1 \cdot
-\mathbf{x} \\ \mathbf{b}_2 \cdot \mathbf{x} \\ \vdots \\ \mathbf{b}_s
-\cdot \mathbf{x} \end{pmatrix} $$ Now, the equality constraints amount
-to the condition that $$(\heartsuit) \quad B \cdot \mathbf{x} =
-\begin{pmatrix} \gamma_1 \\ \gamma_2 \\ \vdots \\ \gamma_s
-\end{pmatrix}$$.
+\mathbf{b}_s \end{pmatrix}$$ 
+
+The product $B \cdot \mathbf{x} \in ℝ^s$ is given by 
+
+$$B \cdot \mathbf{x} = \begin{pmatrix} \mathbf{b}_1 \\ \mathbf{b}_2 \\
+\vdots \\ \mathbf{b}_s \end{pmatrix}\cdot \mathbf{x} = \begin{pmatrix}
+\mathbf{b}_1 \cdot \mathbf{x} \\ \mathbf{b}_2 \cdot \mathbf{x} \\
+\vdots \\ \mathbf{b}_s \cdot \mathbf{x} \end{pmatrix}$$ 
+
+Now, the equality constraints amount to the condition that
+
+$$(\heartsuit) \quad B \cdot \mathbf{x} = \begin{pmatrix} \gamma_1 \\
+\gamma_2 \\ \vdots \\ \gamma_s \end{pmatrix}$$.
 
 An important observation of *linear algebra* is that the solution set
 to $(\heartsuit)$ has the form $$\mathbf{x}_0 +
 \operatorname{Null}(B)$$ where $\mathbf{x}_0$ is any *particular
 solution* to $(\heartsuit)$ and where $\operatorname{Null}(B)$ is the
 *null space* of $B$ -- $$\operatorname{Null}(B) = \left \{\mathbf{z}
-\in \mathbf{R}^n \mid B \cdot \mathbf{z} = \mathbf{0}\right\}.$$
+\in ℝ^n \mid B \cdot \mathbf{z} = \mathbf{0}\right\}.$$
 
 Now, $W=\operatorname{Null}(B)$ is a *linear subspace* of
-$\mathbf{R}^n$. Let $k = \dim W \le n$ be the *dimension* of this null
+$ℝ^n$. Let $k = \dim W \le n$ be the *dimension* of this null
 space. If we choose a basis for $W$, we can identify this space with
-$\mathbf{R}^k$. In case $(\heartsuit)$ has a solution $\mathbf{x}_0$
+$ℝ^k$. In case $(\heartsuit)$ has a solution $\mathbf{x}_0$
 at all, the set $\mathbf{x}_0 + \operatorname{Null}(B) =
-\mathbf{x}_0 + W$ can similarly be identified with $\mathbf{R}^k$
+\mathbf{x}_0 + W$ can similarly be identified with $ℝ^k$
 (just translate the origin!).
 
-* The upshot of all this is that *we don't have to consider equality
-  constraints in linear programming problems, because imposing
+* The upshot of all this is that *when we talk about how to solve a
+  linear programming problem, we are free to only consider such
+  problems which have no equality constraints*. Indeed, imposing
   equality constraints really amounts to reducing the number of
-  variables of the problem* (from $n$ to $k$).
+  variables of the problem (from $n$ to $k$).
 
 * It is of course quite reasonable to impose equality constraints.
 
@@ -553,6 +562,8 @@ Linear programming problems arise naturally in many settings:
 ::: {.cell}
 ## Using `scipy` to solve linear programs
 
+Before we discuss how 
+
 The `scipy` library (more precisely, the `scipy.optimize` library)
 provides a `python` function which implements various algorithms for
 solving linear programs.
@@ -601,7 +612,7 @@ Here is a minimalist sketch.
   matrix $$\widetilde{A} = \begin{pmatrix} A & \mathbf{0} \\
   \mathbf{0} & -I_n \end{pmatrix}$$ and the vector
   $$\widetilde{\mathbf{b}} = \begin{bmatrix} \mathbf{b} \\ \mathbf{0}
-  \end{bmatrix} \in \mathbf{R}^{r+n};$$ the inequality constraint
+  \end{bmatrix} \in ℝ^{r+n};$$ the inequality constraint
   $$\widetilde{A} \cdot \mathbf{x} \le \widetilde{\mathbf{b}}$$ is
   equivalent to the pair of contraints $$A \cdot \mathbf{x} \le
   \mathbf{b}, \quad \mathbf{0} \le \mathbf{x}$$.
@@ -618,7 +629,7 @@ Here is a minimalist sketch.
   of our *carpenter* example.  Notice that the `scipy` implementation
   of `linprog` always *minimizes* its objective function. Of course,
   maximizing the linear objective function determined by the row
-  vector $\mathbf{c} \in \mathbf{R}^{1 \times r}$ is the same as
+  vector $\mathbf{c} \in ℝ^{1 \times r}$ is the same as
   minimizing the linear objective function determined by
   $-\mathbf{c}$.
 
