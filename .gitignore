@@ -1,6 +1,5 @@
 *.pdf
 *.html
-*.ipynb
 *.dvi
 *.log
 *.out
