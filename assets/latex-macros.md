@@ -1,2 +1,0 @@
-
-\newcommand{\Mat}{\operatorname{Mat}}
