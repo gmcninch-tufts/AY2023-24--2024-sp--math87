@@ -1,0 +1,233 @@
+---
+title: |
+ ProblemSet 2 -- Linear programs
+author: George McNinch
+date: 2024-01-29 
+---
+
+1. A linear program
+
+   Consider the optimization problem: find the $\max$ of $f(x, y) = x + 2y$ subject to the
+   following constraints:
+   
+   \begin{align*}
+   y &\le 9 \\
+   −y &\le −1 \\
+   2x + y &≤ 25 \\
+   −2x − y &≤ −9 \\
+   −2x + y &≤ 1 \\
+   2x − y &≤ 15.
+   \end{align*}
+   
+   a. Draw the feasible region. Label the boundary curves and corner points.
+
+      ::: {.solution}
+	  We can use `matplotlib` to draw a sketch of the feasible region, as follows.
+	  Of course, you can also just hand sketch it!
+
+      ``` python
+	  import matplotlib.pyplot as plt
+      import numpy as np
+      plt.rcParams.update({'font.size': 19})
+
+      # plot the feasible region
+      d = np.linspace(0,11,500)
+      e = np.linspace(0,11,500)
+
+      xx,yy = np.meshgrid(d,e)
+
+      fig,ax = plt.subplots(figsize=(15,15))
+      ax.imshow(((yy >= 1) & 
+	             (yy <= 9) & 
+				 (9 <= 2*xx + yy) & 
+				 (2*xx + yy <= 25) & 
+				 (-1 <= 2*xx - yy) &
+                 (2*xx - yy <= 15)
+                 ).astype(int),
+                extent=(xx.min(),xx.max(),yy.min(),yy.max()),
+                origin="lower", 
+                cmap="Reds", 
+                alpha = 0.2)
+
+      # plot the lines defining the constraints
+
+      def l1(x): return 25 - 2*x
+
+      def l2(x): return 9 - 2*x
+
+      def l3(x): return 2*x + 1
+
+      def l4(x): return 2*x - 15
+
+      x = np.linspace(5.5,11,500)
+      ax.plot(x, l1(x) , label="2x + y = 25")
+
+      x = np.linspace(0,6.5,500)
+      ax.plot(x, l2(x) , label="2x + y = 9")
+
+      x = np.linspace(0,6.5,500)
+      ax.plot(x, l3(x), label = "2x - y = -1")
+
+      x = np.linspace(5.5,11,500)
+      ax.plot(x, l4(x), label = "2x - y = 15")
+
+      ax.axhline(y=1, color = "black")
+      ax.axhline(y=9, color = "black")
+
+      ax.legend()
+      ax.set_title("Feasible Region")
+      ax.set_xlabel("x axis")
+      ax.set_ylabel("y axis")
+
+      def ann_pt(x,y):
+          "annotate the point (x,y)"
+          s = f"({x},{y})"
+          ax.annotate(s,xy=(x,y),xytext=(5,5),textcoords='offset points')
+
+      ax.scatter(8, 9,s=100,color="blue")
+      ann_pt(8,9)
+
+      ax.scatter(4,9,s=100,color="blue")
+      ann_pt(4,9)
+
+      ax.scatter(4,1,s=100,color="blue")
+      ann_pt(4,1)
+
+      ax.scatter(8,1,s=100,color="blue")
+      ann_pt(8,1)
+
+      ax.scatter(2,5,s=100,color="blue")
+      ann_pt(2,5)
+
+      ax.scatter(10,5,s=100,color="blue")
+      ann_pt(10,5)
+
+      fig.savefig("feasible.png")
+	  ```
+      which results in
+	  
+	  ![](feasible.png){width=750px}
+	  
+      :::
+
+
+   b. Find the maximum value of f and the point where it occurs.
+
+      ::: {.solution}
+	  
+	  The evaluate the function `f` at each intersection point.
+	  
+	  ``` python
+	  intersection_pts = [ (4,9), (8,9), (10,5), (8,1), (4,1), (2,5) ]
+	  
+	  def f(x,y): return x + 2*y
+	  
+	  ## make a list of pairs ( f(pt), pt) ) and sort the list
+	  
+	  a=[ (f(pt[0],pt[1]),pt) for pt in intersection_pts ]
+
+      a.sort()
+	  ```
+	  
+	  This yields
+	  
+	  ``` python
+	  [(6, (4, 1)), (10, (8, 1)), (12, (2, 5)), (20, (10, 5)), (22, (4, 9)), (26, (8, 9))]
+	  ```
+
+      We see that the *maximum value of `f`* is 26, and this maximum occurs at
+	  $(x,y) = (8,9)$.
+	  :::
+	  
+   c. Verify your answer using `SciPy`.
+
+      ::: {.solution}
+	  
+	  We need to define the *objective function* `f` as a *vector* `c`,
+      and we must define the `inequality constraints.`
+	  
+	  ``` python
+	  import numpy as np
+	  c = np.array([1,2])
+	  
+	  Aub = np.array([ [0,1],
+	                   [0,-1],
+					   [2,1],
+					   [-2,-1],
+					   [-2,1],
+					   [2,-1]
+					   ])
+	  
+	  bub = np.array([ 9,
+	                  -1,
+					  25,
+					  -9,
+					  1,
+					  15])
+					  
+
+	  ```
+	  
+	  and now we run the `linprog` solver. Remember that since we want to *maximize* the objective function,
+	  we must use `-c` for the objective function!
+	  
+	  ``` python
+	  from scipy.optimize import linprog
+	   linprog((-1)*c,A_ub=Aub,b_ub=bub)
+	  ```
+	  This gives the result
+	  ``` python
+              message: Optimization terminated successfully. (HiGHS Status 7: Optimal)
+              success: True
+               status: 0
+                  fun: -26.0
+                    x: [ 8.000e+00  9.000e+00]
+                  nit: 2
+                lower:  residual: [ 8.000e+00  9.000e+00]
+                       marginals: [ 0.000e+00  0.000e+00]
+                upper:  residual: [       inf        inf]
+                       marginals: [ 0.000e+00  0.000e+00]
+                eqlin:  residual: []
+                       marginals: []
+              ineqlin:  residual: [ 0.000e+00  8.000e+00  0.000e+00  1.600e+01
+                                    8.000e+00  8.000e+00]
+                       marginals: [-1.500e+00 -0.000e+00 -5.000e-01 -0.000e+00
+                                   -0.000e+00 -0.000e+00]
+       mip_node_count: 0
+       mip_dual_bound: 0.0
+              mip_gap: 0.0	  
+	  ```
+	  which confirms that the max of 26 occurs at the point `(8,9)`
+	  (see the fields `fun` and `x` in the result).
+	  
+	  :::
+	  
+
+2. Bakers
+
+   A bakery wants to sell forty five Valentine’s Day gift bags. They
+   have decided to offer two types of bags: 
+   
+   - Bags of type A will contain four cupcakes and two cookies, and
+     will be sold for $12
+   
+   - bags of type B will contain two cupcakes and five cookies, and
+     will be sold for $16
+   
+   The bakery has 90 cookies and 115 cupcakes in total.  Write the
+   bakery’s optimization problem as a linear program. Solve this to
+   determine how many baskets of both types should be made. If a
+   fractional solution is obtained, round down to whole number
+   solutions. What is the maximum profit? 
+   
+   You may solve this by drawing the feasible region or using python.
+
+2. A farmer owns 45 acres of land. This season, she will plant each
+   acre with either wheat or corn. Each acre of wheat yields \$200 in
+   seasonal profits, whereas each acre of corn yields \$300 in
+   seasonal profits. Each acre of wheat requires 3 workers and 2 tons
+   of fertilizer, while each acre of corn requires 2 workers and 4
+   tons of fertilizer. The farmer has 100 workers and 120 tons of
+   fertilizer available. Determine how many acres of wheat and corn
+   need to be planted to maximize profits for the season. (Non-integer
+   acreage values are allowed in the solution.)
