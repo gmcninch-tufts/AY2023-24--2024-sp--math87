@@ -115,16 +115,16 @@ date: 2024-01-29
 
       ::: {.solution}
 	  
-	  The evaluate the function `f` at each intersection point.
+	  We evaluate the function `f` at each intersection point.
 	  
 	  ``` python
 	  intersection_pts = [ (4,9), (8,9), (10,5), (8,1), (4,1), (2,5) ]
 	  
 	  def f(x,y): return x + 2*y
 	  
-	  ## make a list of pairs ( f(pt), pt) ) and sort the list
+	  ## make a list of the pairs ( f(pt), pt) ) and sort the list
 	  
-	  a=[ (f(pt[0],pt[1]),pt) for pt in intersection_pts ]
+	  a=[ ( f(pt[0],pt[1]) , pt ) for pt in intersection_pts ]
 
       a.sort()
 	  ```
@@ -222,7 +222,135 @@ date: 2024-01-29
    
    You may solve this by drawing the feasible region or using python.
 
-2. A farmer owns 45 acres of land. This season, she will plant each
+   ::: {.solution}
+   
+   We've written some code that assembles the objective function
+   `obj`, and the constraint data `Aub` and `bub` in order to use
+   `scipy.optimize.linprog` to solve the linear program.
+   
+   ``` python
+   import numpy as np
+   from scipy.optimize import linprog
+
+
+   bags = { 'A' : { 'price': 12.0,
+                    'cupcakes': 4,
+                    'cookies': 2
+                  },
+		    'B' : { 'price': 16.0,
+                    'cupcakes': 2,
+                    'cookies': 5
+                  }
+          }
+
+   items = [ item for item in bags.keys() ]
+
+   resources = { 'cupcakes': 115.0,
+                 'cookies': 90.0
+                 }
+
+   # build the (0-indexed) standard basis vector
+   # e.g. sbv(2,4) returns [ 0.0, 0.0, 1.0, 0.0 ]
+   #
+   def sbv(index,len):
+       return np.array([ 1.0 if index == i else 0.0 for i in range(len) ])
+
+   # return the standard basis vector corresponding to the index of an entry in a list
+   # e.g. itemVector('b',['a','b','c','d']) returns [ 0.0, 1.0, 0.0, 0.0 ]
+   #
+   def itemVector(x,ll):
+       return sbv(ll.index(x),len(ll))
+
+   # objective function, as a vector
+   obj = sum([ bags[item]['price']*itemVector(item,items) for item in items ])
+
+   # upper bound constraint matrix
+   Aub = np.array([ [ bags[item][resource]
+                      for item in items
+                     ]
+                    for resource in resources.keys()
+                   ])
+
+   # upper bound constraint vector
+   bub = np.array([ resources[res] for res in resources.keys()])
+
+   # remember that this is a maximizing problem, so multiply the objective function by (-1)
+   #
+   res = linprog( (-1)*obj, A_ub = Aub, b_ub = bub)
+
+   ```
+
+   This is perhaps overly complicated for a 2-variable problem, but it yields
+   the following values:
+   ``` python
+   obj 
+   => [12. 16.]
+    
+   Aub
+   => [[4 2]
+       [2 5]]
+	   
+   bub 
+   => [115. 90.]
+   
+   res
+   =>
+           message: Optimization terminated successfully. (HiGHS Status 7: Optimal)
+           success: True
+            status: 0
+               fun: -426.25
+                 x: [ 2.469e+01  8.125e+00]
+               nit: 2
+             lower:  residual: [ 2.469e+01  8.125e+00]
+                    marginals: [ 0.000e+00  0.000e+00]
+             upper:  residual: [       inf        inf]
+                    marginals: [ 0.000e+00  0.000e+00]
+             eqlin:  residual: []
+                    marginals: []
+           ineqlin:  residual: [ 0.000e+00  0.000e+00]
+                    marginals: [-1.750e+00 -2.500e+00]
+    mip_node_count: 0
+    mip_dual_bound: 0.0
+           mip_gap: 0.0   
+
+   ```
+   
+   This result indicates that the max profit should be $426.25$, obtained at the point
+   $(24.69, 8.125)$. However, since we need to round to a whole number we find that we should
+   make 24 or 25 `A`-type bags and 8 or 9 `B` type bags.
+
+   Let's compute 
+   
+   (notice that the `numpy` operation `M @ v` means "multiply the matrix M and the vector v".
+   You could also do this via `np.matmul(M,v)`).
+   ``` python 
+   pp = [ [24,8], [24,9], [25,8], [25,9] ]
+
+   print("\n".join([ f"{p} => {Aub @ np.array(p)}    {Aub @ np.array(p) <= bub}" 
+         for  p in pp ]))
+   
+   =>  
+   [24, 8] => [112  88]   [ True  True]
+   [24, 9] => [114  93]   [ True False]
+   [25, 8] => [116  90]   [False  True]
+   [25, 9] => [118  95]   [False False]
+   ```
+    
+   This shows that, for example, making 24 `A` bags and 9 `B` bags requires 114 cupcakes and 93 cookies
+   (which exceeds available resources).
+   
+   Inspecting the list, we see that we should make 24 `A` bags and 8 `B` bags, yielding a profit of $416
+   
+   ``` python
+   obj @ np.array([24,8]) 
+   =>
+   416
+   ```
+   
+   :::
+
+
+3. A farmer owns 45 acres of land. This season, she will plant each
    acre with either wheat or corn. Each acre of wheat yields \$200 in
    seasonal profits, whereas each acre of corn yields \$300 in
    seasonal profits. Each acre of wheat requires 3 workers and 2 tons
@@ -231,3 +359,136 @@ date: 2024-01-29
    fertilizer available. Determine how many acres of wheat and corn
    need to be planted to maximize profits for the season. (Non-integer
    acreage values are allowed in the solution.)
+
+   ::: {.solution}
+   We've written some code that assembles the objective function
+   `obj`, and the constraint data `Aub` and `bub` in order to use
+   `scipy.optimize.linprog` to solve the linear program.   
+   
+   ``` python
+   import numpy as np
+   from scipy.optimize import linprog
+   
+
+   ## requirements per acre,
+   ## as a (nested) python dictionary
+   ## e.g. `crop_specs['corn']['fertilizer']` reflects the 
+   ## amount of fertilizer (in tons) required
+   ## for an acre of corn
+   crop_specs = { 'wheat' : { 'profits': 200.0,
+                              'workers': 3,
+                              'fertilizer': 2,
+                              'acres': 1
+                             },
+                  'corn' : { 'profits': 300.0,
+                             'workers': 2,
+                             'fertilizer': 4,
+                             'acres': 1
+                            }
+                 }
+   
+   crops = [ c for c in crop_specs.keys() ]
+   
+   resource_specs = { 'workers': 100.0,
+                      'fertilizer': 120.0,
+                      'acres': 45
+                     }
+   
+   resources = [ r for r in resource_specs.keys() ]
+   
+   # build the (0-indexed) standard basis vector
+   # e.g. sbv(2,4) returns [ 0.0, 0.0, 1.0, 0.0 ]
+   #
+   def sbv(index,len):
+       return np.array([ 1.0 if index == i else 0.0 for i in range(len) ])
+   
+   # return the standard basis vector corresponding to the index of an entry in a list
+   # e.g. itemVector('b',['a','b','c','d']) returns [ 0.0, 1.0, 0.0, 0.0 ]
+   #
+   def itemVector(x,ll):
+       return sbv(ll.index(x),len(ll))
+   
+   # objective function, as a vector
+   obj = sum([ crop_specs[c]['profits']*itemVector(c,crops) for c in crops ])
+   
+   # upper bound constraint matrix
+   # this matrix has a row for each `resource`,
+   # and the entries for that row are obtained from the `crop_specs`
+   Aub = np.array([ [ crop_specs[c][res]
+                      for c in crops
+                     ]
+                    for res in resources
+                   ])
+   
+   # upper bound constraint vector
+   bub = np.array([ resource_specs[res] for res in resources])
+   
+   res = linprog( (-1)*obj, A_ub = Aub, b_ub = bub)
+   ```
+   
+   This gives the following results:
+
+   
+   ``` python
+   obj 
+   => 
+   [200. 300.]
+   
+   Aub 
+   =>
+   [[3 2]
+    [2 4]
+    [1 1]]
+	
+	bub
+	=>
+   [100. 120.  45.]
+   
+   res
+   =>
+              message: Optimization terminated successfully. (HiGHS Status 7: Optimal)
+           success: True
+            status: 0
+               fun: -10000.0
+                 x: [ 2.000e+01  2.000e+01]
+               nit: 2
+             lower:  residual: [ 2.000e+01  2.000e+01]
+                    marginals: [ 0.000e+00  0.000e+00]
+             upper:  residual: [       inf        inf]
+                    marginals: [ 0.000e+00  0.000e+00]
+             eqlin:  residual: []
+                    marginals: []
+           ineqlin:  residual: [ 0.000e+00  0.000e+00  5.000e+00]
+                    marginals: [-2.500e+01 -6.250e+01 -0.000e+00]
+    mip_node_count: 0
+    mip_dual_bound: 0.0
+           mip_gap: 0.0
+
+   ```
+   
+   The result shows that the maximal profit is \$10,000 and it is achievd
+   by planting 20 acres of corn and 20 acres of wheat.
+   
+   This may seem slightly surprising, since after all we have 45 available acres.
+   
+   Let's investigate this solution a bit:
+   
+   ``` python
+   usage = Aub @ np.array([20,20])
+
+   for r in resources:
+       print(f"{r} -> {usage[resources.index(r)]}")
+	  
+   =>
+   workers -> 100
+   fertilizer -> 120
+   acres -> 40
+
+   ```
+   
+   We see that this solutions requires all available of workers
+   and all available tonnage of fertilizer, so it is indeed
+   plausible that the maximum profit is achieved without use of the
+   remaining 5 acres of land.
+   
+   :::
