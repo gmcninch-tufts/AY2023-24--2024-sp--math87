@@ -125,11 +125,13 @@ for e in edges:
 dot.render('graph.png')
 #--------------------------------------------------------------------------------
 
+# return a standard basis vector
+# these are "0-indexed" e.g. sbv(0,3) == [1,0,0]
 def sbv(index,size):
     return np.array([1.0 if i == index else 0.0 for i in range(size)])
 
 
-# objective vector 
+# return the objective vector for the "costs" linear program
 def ship_costs_obj(edges):
     return sum([ e['ship_costs']*sbv(edges.index(e),len(edges))
                  for e in edges
@@ -164,4 +166,45 @@ def conservationMatrix(vertices,edges):
     return np.array([conservationLaw(v,edges) for v in interiorVertices(vertices,edges) ])
 
 
+# return the edge with 'from': f and 'to': t
+#
+def lookupEdge(f,t,edges):
+    r = list(filter(lambda x: x['from'] == f and x['to'] == t, edges))
+    if r != []:
+        return r[0]
+    else:
+        return "error"
+
+
+def lookupEdgeIndex(f,t,edges):
+    r = lookupEdge(f,t,edges)
+    return edges.index(r)
+    
+def equalityConstraint(vertices,edges):
+    cl = [conservationLaw(v,edges) for v in interiorVertices(vertices,edges) ]
+    supply = [ supplies[w]*sbv(lookupEdgeIndex('Source',w,edges),len(edges))
+               for w in warehouse_cities ]
+    demand = [ demand[s]*sbv(lookupEdgeIndex(s,'Demand',edges),len(edges))
+               for s in store_cities ]
+
+    np.array(cl + supply + demand)
+    
+def ineqConstraints(edges):
+    m = np.array([*[ sbv(edges.index(e),len(edges)) 
+                     for e in edges 
+                     if not upperBound(e) == math.inf ],
+                  *[ -sbv(edges.index(e),len(edges))
+                     for e in edges
+                     if not lowerBound(e) == -math.inf ]
+                 ])
+    
+    b = np.array([ *[ upperBound(e) 
+                      for e in edges 
+                      if not upperBound(e) == math.inf],
+                   *[ -lowerBound(e) 
+                      for e in edges 
+                      if not lowerBound(e) == -math.inf]
+                 ])
+
+    return m,b
 
