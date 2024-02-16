@@ -228,45 +228,35 @@ date: 2024-01-29
    `obj`, and the constraint data `Aub` and `bub` in order to use
    `scipy.optimize.linprog` to solve the linear program.
    
+   
    ``` python
    import numpy as np
    from scipy.optimize import linprog
 
-
-   bags = { 'A' : { 'price': 12.0,
-                    'cupcakes': 4,
-                    'cookies': 2
-                  },
-		    'B' : { 'price': 16.0,
-                    'cupcakes': 2,
-                    'cookies': 5
-                  }
-          }
-
-   items = [ item for item in bags.keys() ]
-
+   bag_specs = { 'A' : { 'price': 12.0,
+                         'cupcakes': 4,
+                         'cookies': 2,
+                         'bags': 1
+                         },
+                 'B' : { 'price': 16.0,
+                         'cupcakes': 2,
+                         'cookies': 5,
+                         'bags': 1
+                         }
+                 }
+   
    resources = { 'cupcakes': 115.0,
-                 'cookies': 90.0
+                 'cookies': 90.0,
+                 'bags': 45
                  }
 
-   # build the (0-indexed) standard basis vector
-   # e.g. sbv(2,4) returns [ 0.0, 0.0, 1.0, 0.0 ]
-   #
-   def sbv(index,len):
-       return np.array([ 1.0 if index == i else 0.0 for i in range(len) ])
-
-   # return the standard basis vector corresponding to the index of an entry in a list
-   # e.g. itemVector('b',['a','b','c','d']) returns [ 0.0, 1.0, 0.0, 0.0 ]
-   #
-   def itemVector(x,ll):
-       return sbv(ll.index(x),len(ll))
 
    # objective function, as a vector
-   obj = sum([ bags[item]['price']*itemVector(item,items) for item in items ])
+   obj = np.array([ bags_specs[item]['price'] for item in bag_specs.keys() ]))
 
    # upper bound constraint matrix
-   Aub = np.array([ [ bags[item][resource]
-                      for item in items
+   Aub = np.array([ [ bag_specs[item][resource]
+                      for item in bag_specs.keys()
                      ]
                     for resource in resources.keys()
                    ])
@@ -284,14 +274,15 @@ date: 2024-01-29
    the following values:
    ``` python
    obj 
-   => [12. 16.]
+   => array([12., 16.])
     
    Aub
-   => [[4 2]
-       [2 5]]
+   => array([[4, 2],
+             [2, 5],
+			 [1, 1]])
 	   
    bub 
-   => [115. 90.]
+   => array([115.,  90.,  45.])
    
    res
    =>
@@ -387,41 +378,25 @@ date: 2024-01-29
                             }
                  }
    
-   crops = [ c for c in crop_specs.keys() ]
-   
    resource_specs = { 'workers': 100.0,
                       'fertilizer': 120.0,
                       'acres': 45
                      }
    
-   resources = [ r for r in resource_specs.keys() ]
-   
-   # build the (0-indexed) standard basis vector
-   # e.g. sbv(2,4) returns [ 0.0, 0.0, 1.0, 0.0 ]
-   #
-   def sbv(index,len):
-       return np.array([ 1.0 if index == i else 0.0 for i in range(len) ])
-   
-   # return the standard basis vector corresponding to the index of an entry in a list
-   # e.g. itemVector('b',['a','b','c','d']) returns [ 0.0, 1.0, 0.0, 0.0 ]
-   #
-   def itemVector(x,ll):
-       return sbv(ll.index(x),len(ll))
-   
    # objective function, as a vector
-   obj = sum([ crop_specs[c]['profits']*itemVector(c,crops) for c in crops ])
+   obj = np.array([ crop_specs[c]['profits'] for c in crop_specs.keys() ])
    
    # upper bound constraint matrix
    # this matrix has a row for each `resource`,
    # and the entries for that row are obtained from the `crop_specs`
    Aub = np.array([ [ crop_specs[c][res]
-                      for c in crops
+                      for c in crop_specs.keys()
                      ]
-                    for res in resources
+                    for res in resource_specs.keys()
                    ])
    
    # upper bound constraint vector
-   bub = np.array([ resource_specs[res] for res in resources])
+   bub = np.array([ resource_specs[res] for res in resource_specs.keys()])
    
    res = linprog( (-1)*obj, A_ub = Aub, b_ub = bub)
    ```

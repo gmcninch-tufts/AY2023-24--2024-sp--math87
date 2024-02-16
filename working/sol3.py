@@ -37,17 +37,17 @@ def itemVector(x,ll):
     return sbv(ll.index(x),len(ll))
 
 # objective function, as a vector
-obj = sum([ crop_specs[c]['profits']*itemVector(c,crops) for c in crops ])
+obj = np.array([ crop_specs[c]['profits'] for c in crop_specs.keys() ])
 
 # upper bound constraint matrix
 Aub = np.array([ [ crop_specs[c][res]
-                   for c in crops
+                   for c in crop_specs.keys()
                   ]
-                 for res in resources
+                 for res in resource_specs.keys()
                 ])
 
 # upper bound constraint vector
-bub = np.array([ resource_specs[res] for res in resources])
+bub = np.array([ resource_specs[res] for res in resource_specs.keys()])
 
 res = linprog( (-1)*obj, A_ub = Aub, b_ub = bub)
 
