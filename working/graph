@@ -1,0 +1,46 @@
+digraph example {
+	rankdir=LR
+	Source
+	subgraph warehouse {
+		rank=same
+		"Santa Fe"
+		"El Paso"
+		"Tampa Bay"
+	}
+	subgraph hubs {
+		rank=same
+		Houston
+		Atlanta
+	}
+	subgraph stores {
+		rank=same
+		Chicago
+		LA
+		NY
+	}
+	Source -> "Santa Fe"
+	Source -> "El Paso"
+	Source -> "Tampa Bay"
+	"Santa Fe" -> Chicago
+	"Santa Fe" -> LA
+	"Santa Fe" -> Houston
+	"Santa Fe" -> Atlanta
+	"El Paso" -> LA
+	"El Paso" -> Houston
+	"El Paso" -> Atlanta
+	"Tampa Bay" -> NY
+	"Tampa Bay" -> Houston
+	"Tampa Bay" -> Atlanta
+	Houston -> Chicago
+	Houston -> LA
+	Houston -> NY
+	Houston -> Atlanta
+	Atlanta -> Chicago
+	Atlanta -> NY
+	Atlanta -> Houston
+	Chicago -> Demand
+	LA -> Demand
+	NY -> Demand
+	Houston -> Demand
+	Atlanta -> Demand
+}
