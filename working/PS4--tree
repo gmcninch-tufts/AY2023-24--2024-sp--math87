@@ -1,0 +1,23 @@
+graph {
+	0 [label=-14312.87]
+	1 [label="9523.68
+ **pruned**"]
+	2 [label=14052.24]
+	3 [label="8637.78
+ **pruned**"]
+	4 [label=12790.70]
+	5 [label=11062.22]
+	6 [label="infeas
+ **pruned**"]
+	7 [label=11000.00]
+	8 [label="infeas
+ **pruned**"]
+	0 -- 1 [label="A=0"]
+	0 -- 2 [label="A=1"]
+	2 -- 3 [label="D=0"]
+	2 -- 4 [label="D=1"]
+	4 -- 5 [label="C=0"]
+	4 -- 6 [label="C=1"]
+	5 -- 7 [label="B=0"]
+	5 -- 8 [label="B=1"]
+}
