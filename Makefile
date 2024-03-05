@@ -8,7 +8,7 @@ CSS_DEFAULT = ../assets/default.css
 
 MJ=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js
 
-VPATH = .:pacing:resources:problem-sets:lectures:Exams:practicum:Exam-review
+VPATH = .:pacing:resources:problem-sets:lectures:Exams:practicum:Exam-review:working
 
 notebooks = $(wildcard notebooks-pending/*.md)
 notebooks_j =$(notebooks:.md=.ipynb)
@@ -31,7 +31,7 @@ working: $(working_html) $(working_pdf)
 
 
 %.pdf: %.md
-	$(PD) $(META) $<  --pdf-engine=xelatex --resource-path=$(RP) --to pdf -o $@
+	$(PD) $(META) $<  --resource-path=working --extract-media=. --pdf-engine=xelatex  --to pdf -o $@
 
 
 
@@ -43,13 +43,7 @@ echoes:
 
 .PHONY = clean
 
-clean: clean_content clean_logistics clean_posts
+clean: clean_work
 
-clean_content:
-	-rm -f $(content_json) $(content_pdf)  $(content_md) $(content_tex)
-
-clean_logistics:
-	-rm -f $(logistics_html) $(pacing_md) $(logistics_pdf)
-
-clean_posts:
-	-rm -f $(posts_slides) $(posts_pdf)  $(posts_html)
+clean_work:
+	-rm -f $(working_html) $(working_pdf)

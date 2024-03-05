@@ -2,6 +2,7 @@
 title: Course Syllabus
 author: George McNinch
 date: 2024-01-07
+abstract: Course Syllabus 
 ---
 
 

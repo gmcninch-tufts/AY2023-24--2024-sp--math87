@@ -1,15 +1,15 @@
 graph {
-	0 [label=-14312.87]
-	1 [label="9523.68
+	0 [label=13512.87]
+	1 [label="8723.68
  **pruned**"]
-	2 [label=14052.24]
-	3 [label="8637.78
+	2 [label=13287.51]
+	3 [label="8553.33
  **pruned**"]
-	4 [label=12790.70]
-	5 [label=11062.22]
+	4 [label=11990.70]
+	5 [label=10276.34]
 	6 [label="infeas
  **pruned**"]
-	7 [label=11000.00]
+	7 [label=10222.00]
 	8 [label="infeas
  **pruned**"]
 	0 -- 1 [label="A=0"]

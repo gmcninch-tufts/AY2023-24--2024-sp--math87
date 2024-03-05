@@ -1,0 +1,9 @@
+graph {
+	data
+	"encoded data"
+	"received data"
+	"decoded data"
+	data -- "encoded data" [label="x ↦ x·G"]
+	"encoded data" -- "received data" [label=" **channel** "]
+	"received data" -- "decoded data"
+}

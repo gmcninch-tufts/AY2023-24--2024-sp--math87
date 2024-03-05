@@ -15,6 +15,8 @@ store_cities = [ 'Chicago',
                  'Atlanta'
                 ]
 
+hubs = [ 'Houston', 'Atlanta' ]
+
 vertices=[ 'Source',
            *warehouse_cities,
            *store_cities,
@@ -248,6 +250,13 @@ costs_result = linprog(costs_obj,
                        )
 
 
+def display_result(res):
+    print(f"Objective value: {abs(res.fun)}")
+    print("============================")
+    for e in edges:
+        i = edges.index(e)
+        print(f"{e['from']} -> {e['to']}: {res.x[i]}")
+
 ## LA situation
 
 ## demand scenario
@@ -386,11 +395,11 @@ Houston_strike_costs_result = linprog(costs_obj,
 
 def profit(e):
     match e['from'],e['to']:
-        case 'Santa Fe','Demand':
+        case 'Source','Santa Fe':
             return -8
-        case 'El Paso','Demand':
+        case 'Source','El Paso':
             return -5
-        case 'Tampa Bay','Demand':
+        case 'Source','Tampa Bay':
             return -10
         case 'Chicago','Demand':
             return 15

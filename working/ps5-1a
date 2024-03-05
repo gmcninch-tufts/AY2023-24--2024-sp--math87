@@ -1,0 +1,24 @@
+graph {
+	rankdir=LR
+	subgraph U {
+		rank=same
+		U0
+		U1
+		U2
+		U3
+	}
+	subgraph V {
+		rank=same
+		V0
+		V1
+		V2
+		V3
+	}
+	U0 -- V0
+	U1 -- V0
+	U2 -- V0
+	U2 -- V1
+	U2 -- V2
+	U3 -- V3
+	U3 -- V2
+}

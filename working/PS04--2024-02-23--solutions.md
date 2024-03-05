@@ -49,7 +49,17 @@ date: 2024-02-23
 	  
 	  `maximize`
 	  
-	    `actual_value = [ 5000, 600, 3500, 6000 ] . x.T = 5000 A + 600 B + 3500 C + 6000 D`
+	    `value = actual_value - purchase_price`  
+	  
+	  where  
+	  ```
+	    actual_value = [ 5000, 600, 3500, 6000 ] . [ A, B, C, D].T   
+		             = 5000 A + 600 B + 3500 C + 6000 D
+					 
+			
+		purchase_price = [ 75.7, 27, 3.3, 6.7 ] . [ A, B, C, D].T 
+		               = 75.7 A + 27 B + 3.3 C + 6.7 D
+	  ```
 	  
 	  subject to:
 	  
@@ -76,21 +86,21 @@ date: 2024-02-23
       actual_value = np.array([ 5000, 600, 3500, 6000 ])
       sales_price  = np.array([ 24, 76, 43, 754 ])
       weight       = np.array([ 75.5, 27, 3.3, 6.7 ])
-      
+
+      obj = actual_value - sales_price
+
 	  bounds = 4*[(0,1)]
 	  
       Aub = np.array([sales_price,weight])
       bub = np.array([800,85])
       
-      res = linprog((-1)*actual_value, A_ub = Aub, b_ub = bub,bounds=bounds)
+      res = linprog((-1)*obj, A_ub = Aub, b_ub = bub,bounds=bounds)
 
       pprint({ 'obj_value': res.fun, 'solution': res.x})
 	  =>
-      {'obj_value': -14312.872801068243,
-	  'solution': array([0.99583731, 0.        , 1.        , 0.97228104])}
+	  {'obj_value': -13512.872801068243,
+	  'solution': array([0.99583731, 0.        , 1.        , 0.97228104])}	  
 	  ```
-	  
-	  The relaxed solution we get is `A = 0.99583731, B= 0, C=1, D=0.97228104`.
 	  
 	  We are now going to branch; we'll use the following code.
 	  
@@ -103,7 +113,7 @@ date: 2024-02-23
          return np.array([1.0 if i == j else 0.0 for i in range(size)])
 
       # record the data for the linear program as a dictionary, for ease of passage
-      lp = { 'obj': actual_value,
+      lp = { 'obj': obj,
              'Aub': Aub,
              'bub': bub,
              'bounds': bounds
@@ -148,8 +158,8 @@ date: 2024-02-23
 		res_A0 = branch([{'var': 'A', 'val': 0}],lp)  
 		pprint(res_A0)
 		=>
-		{'obj_value': 9523.684210526317,
-		'solution': array([-0.        ,  0.03947368,  1.        ,  1.        ])}
+		{'obj_value': 8723.684210526317,
+		'solution': array([-0.        ,  0.03947368,  1.        ,  1.        ])}		
 		```
 		  
 	  - `A=1`: We solve the linear program specifying `A=1`.
@@ -158,8 +168,8 @@ date: 2024-02-23
 		res_A1 = branch([{'var': 'A', 'val': 1}],lp)  
 		pprint(res_A1)
 		=>
-		{'obj_value': 14052.238805970152,
-		'solution': array([1.        , 0.        , 1.        , 0.92537313])}
+		{'obj_value': 13287.50746268657,
+		'solution': array([1.        , 0.        , 1.        , 0.92537313])}		
 		```
 	  
 	  Since the `obj_value` is larger for `A=1`, we branch below that value on `D`.
@@ -171,8 +181,8 @@ date: 2024-02-23
 		                      {'var': 'D', 'val': 0}],lp)
 		  pprint(res_A1_D0)
 		  =>
-		  {'obj_value': 8637.777777777777,
-		  'solution': array([ 1.        ,  0.22962963,  1.        , -0.        ])}
+		  {'obj_value': 8553.325925925925,
+		  'solution': array([ 1.        ,  0.22962963,  1.        , -0.        ])}		  
 		  ```
 		
 		- `A=1, D=1`
@@ -182,8 +192,8 @@ date: 2024-02-23
 		                      {'var': 'D', 'val': 1}],lp)		  
 		  pprint(res_A1_D1)
 		  =>
-		  {'obj_value': 12790.697674418605,
-		  'solution': array([1.        , 0.        , 0.51162791, 1.        ])}
+		  {'obj_value': 11990.697674418605,
+		  'solution': array([1.        , 0.        , 0.51162791, 1.        ])}							  		  
 		  ```
 
 	   The largest objective value so far is `A=1,D=1` so we branch
@@ -197,7 +207,7 @@ date: 2024-02-23
 								{'var': 'C', 'val': 0}],lp)
 	     pprint(res_A1_D1_C0)
 		 =>
-		 {'obj_value': 11062.222222222223,
+		 {'obj_value': 10276.34074074074,
 		 'solution': array([ 1.       ,  0.1037037, -0.       ,  1.       ])}		 
 		 ```
 	   
@@ -220,21 +230,21 @@ date: 2024-02-23
 	  
 	    ``` python
 		res_A1_D1_C0_B0 = branch([{'var': 'A', 'val': 1},
-                                 {'var': 'D', 'val': 1},
-								 {'var': 'C', 'val': 0},
-								 {'var': 'B', 'val': 0}],lp)
+                                  {'var': 'D', 'val': 1},
+								  {'var': 'C', 'val': 0},
+								  {'var': 'B', 'val': 0}],lp)
 		pprint(res_A1_D1_C0_B0)
 		=>
-		{'obj_value': 11000.0, 'solution': array([ 1., -0., -0.,  1.])}
+		{'obj_value': 10222.0, 'solution': array([ 1., -0., -0.,  1.])}		
 		```
 	  
-	  - `A=1, D=1, C=0, B=0`
+	  - `A=1, D=1, C=0, B=1`
 
 	    ``` python
 		res_A1_D1_C0_B1 = branch([{'var': 'A', 'val': 1},
-                          {'var': 'D', 'val': 1},
-                          {'var': 'C', 'val': 0},
-                          {'var': 'B', 'val': 1}],lp)
+                                  {'var': 'D', 'val': 1},
+								  {'var': 'C', 'val': 0},
+								  {'var': 'B', 'val': 1}],lp)
 	    pprint(res_A1_D1_C0_B1)
 		=>
 		'lin program failed'
@@ -243,16 +253,17 @@ date: 2024-02-23
 		
 
       Now we pause to inspect our results so far. We have found an integral solution
-	  `A=1, D=1, C=0, B=0` with `obj_value = 11000`.
+	  `A=1, D=1, C=0, B=0` with `obj_value = 10222`.
 	  
-	  This objective value exceeds `9523` which is the `obj_value` at `A=0`. 
+	  This objective value exceeds `8724` which is the `obj_value` at `A=0`. 
 	  So we prune at `A=0`
 	  
-	  And this objective value exceeds `8637` which is the `obj_value`
+	  And this objective value exceeds `8553` which is the `obj_value`
 	  at `A=1,D=0`. So we prune at `A=1,D=0`.
 	  
-	  So we find that the optimal integral solution to the linear program
-	  is to buy the `A`-crate and the `D`-crate, getting real value of `11,000`.
+	  So we find that the optimal integral solution to the linear
+	  program is to buy the `A`-crate and the `D`-crate, getting a
+	  real value of `10,222` from the purchase.
 
 	  :::
 	  
@@ -265,25 +276,24 @@ date: 2024-02-23
 	  ``` python
       from graphviz import Graph
       
-      nodes = { 0: res.fun,
-                1: res_A0['obj_value'],
-                2: res_A1['obj_value'],
-                3: res_A1_D0['obj_value'],
-                4: res_A1_D1['obj_value'],
-                5: res_A1_D1_C0['obj_value'],
-                7: res_A1_D1_C0_B0['obj_value'],
+      nodes = { 0: f"{(-1)*res.fun:.2F}",
+                1: f"{res_A0['obj_value']:.2f}",
+                2: f"{res_A1['obj_value']:.2f}",
+                3: f"{res_A1_D0['obj_value']:.2f}",
+                4: f"{res_A1_D1['obj_value']:.2f}",
+                5: f"{res_A1_D1_C0['obj_value']:.2f}",
+                6: "infeas",
+                7: f"{res_A1_D1_C0_B0['obj_value']:.2f}",
+                8: "infeas"
                 }
       
       pruned = [1,3,6,8]
       
       def describe(n):
-          if n in nodes.keys():
-              if n in pruned:
-                  return f"{nodes[n]:.2f} **pruned**"
-              else:
-                  return f"{nodes[n]:.2f}"
+          if n in pruned:
+              return f"{nodes[n]}\n **pruned**"
           else:
-              return "infeas **pruned**"
+              return f"{nodes[n]}"
       
       dot = Graph()
       dot.filename='PS4--tree'

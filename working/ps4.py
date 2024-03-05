@@ -5,12 +5,14 @@ actual_value = np.array([ 5000, 600, 3500, 6000 ])
 sales_price  = np.array([ 24, 76, 43, 754 ])
 weight       = np.array([ 75.5, 27, 3.3, 6.7 ])
 
+obj = actual_value - sales_price
+
 Aub = np.array([sales_price,weight])
 bub = np.array([800,85])
 
 bounds = 4*[(0,1)]
 
-res = linprog((-1)*actual_value, A_ub = Aub, b_ub = bub,bounds = bounds)
+res = linprog((-1)*obj, A_ub = Aub, b_ub = bub,bounds = bounds)
 
 ##--------------------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ def sbv(j,size):
     return np.array([1.0 if i == j else 0.0 for i in range(size)])
 
 # record the data for the linear program as a dictionary, for ease of passage
-lp = { 'obj': actual_value,
+lp = { 'obj': obj,
        'Aub': Aub,
        'bub': bub,
        'bounds': bounds
@@ -90,25 +92,24 @@ res_A0_B1 = branch([{'var': 'A', 'val': 0},
 
 from graphviz import Graph
 
-nodes = { 0: res.fun,
-          1: res_A0['obj_value'],
-          2: res_A1['obj_value'],
-          3: res_A1_D0['obj_value'],
-          4: res_A1_D1['obj_value'],
-          5: res_A1_D1_C0['obj_value'],
-          7: res_A1_D1_C0_B0['obj_value'],
+nodes = { 0: f"{(-1)*res.fun:.2F}",
+          1: f"{res_A0['obj_value']:.2f}",
+          2: f"{res_A1['obj_value']:.2f}",
+          3: f"{res_A1_D0['obj_value']:.2f}",
+          4: f"{res_A1_D1['obj_value']:.2f}",
+          5: f"{res_A1_D1_C0['obj_value']:.2f}",
+          6: "infeas",
+          7: f"{res_A1_D1_C0_B0['obj_value']:.2f}",
+          8: "infeas"
           }
 
 pruned = [1,3,6,8]
 
 def describe(n):
-    if n in nodes.keys():
-        if n in pruned:
-            return f"{nodes[n]:.2f}\n **pruned**"
-        else:
-            return f"{nodes[n]:.2f}"
+    if n in pruned:
+        return f"{nodes[n]}\n **pruned**"
     else:
-        return "infeas\n **pruned**"
+        return f"{nodes[n]}"
 
 dot = Graph()
 dot.filename='PS4--tree'
