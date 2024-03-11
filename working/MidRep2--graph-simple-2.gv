@@ -1,0 +1,22 @@
+digraph "MidRep2--graph-simple-2" {
+	rankdir=LR
+	V1
+	{
+		rank=same
+		V2
+		V3
+		V4
+	}
+	V5
+	V1 -> V2
+	V1 -> V3
+	V1 -> V4
+	V2 -> V3
+	V3 -> V4
+	V4 -> V5
+	V2 -> V5
+	V2 -> V1
+	V3 -> V1
+	V4 -> V1
+	V5 -> V1
+}
