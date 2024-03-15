@@ -454,3 +454,5 @@ profit_result = linprog((-1)*profit_obj,
 def report(x):
     for (val,e) in zip(x,edges):
         print(f"{e['from']:10} -> {e['to']:10}:  {val: 7.2f}")
+    
+        
